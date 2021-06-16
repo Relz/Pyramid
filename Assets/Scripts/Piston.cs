@@ -15,17 +15,17 @@ public class Piston : MonoBehaviour
     public int Weight
     {
         get => _weight;
-        set => _photonView.RPC("SetWeight", RpcTarget.All, (object)value);
+        set => GetPhotonView().RPC("SetWeight", RpcTarget.All, (object)value);
     }
     public int Square
     {
         get => _square;
-        set => _photonView.RPC("SetSquare", RpcTarget.All, (object)value);
+        set => GetPhotonView().RPC("SetSquare", RpcTarget.All, (object)value);
     }
     public float UnroundedLevel
     {
         get => _unroundedLevel;
-        set => _photonView.RPC("SetUnroundedLevel", RpcTarget.All, (object)value);
+        set => GetPhotonView().RPC("SetUnroundedLevel", RpcTarget.All, (object)value);
     }
     public int Level { get => Math.Min(MAX_LEVEL, Math.Max(0, (int)Math.Round(UnroundedLevel))); }
     public bool IsBalanced { get => PairedPiston != null && Math.Abs(Level - PairedPiston.GetComponent<Piston>().Level) <= 2; }
@@ -43,6 +43,11 @@ public class Piston : MonoBehaviour
     public void Awake()
     {
         _photonView = GetComponent<PhotonView>();
+    }
+
+    private PhotonView GetPhotonView()
+    {
+        return _photonView ?? GetComponent<PhotonView>();
     }
 
     public void Update()
@@ -93,7 +98,7 @@ public class Piston : MonoBehaviour
 
     public void OnMouseDown()
     {
-        if (_photonView.Owner == PhotonNetwork.LocalPlayer)
+        if (GetPhotonView().Owner == PhotonNetwork.LocalPlayer)
         {
             OnMouseDownCallback(this);
         }
